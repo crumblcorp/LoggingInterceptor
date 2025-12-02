@@ -16,7 +16,6 @@ import ihsanbal.com.logginginterceptor.R
 import ihsanbal.com.logginginterceptor.api.Api
 import ihsanbal.com.logginginterceptor.base.BaseCompatActivity
 import ihsanbal.com.logginginterceptor.model.Body
-import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.MultipartBody.Part.Companion.createFormData
@@ -46,14 +45,14 @@ class MainActivity : BaseCompatActivity() {
     }
 
     private fun bindListeners() {
-        button_post.setOnClickListener { callPost() }
-        button_zip.setOnClickListener { callZip() }
-        button_get.setOnClickListener { callGet() }
-        button_delete.setOnClickListener { callDelete() }
-        button_patch.setOnClickListener { callPatch() }
-        button_put.setOnClickListener { callPut() }
-        button_pdf.setOnClickListener { callPdf() }
-        button_pdf_upload.setOnClickListener { callUpload() }
+//        button_post.setOnClickListener { callPost() }
+//        button_zip.setOnClickListener { callZip() }
+//        button_get.setOnClickListener { callGet() }
+//        button_delete.setOnClickListener { callDelete() }
+//        button_patch.setOnClickListener { callPatch() }
+//        button_put.setOnClickListener { callPut() }
+//        button_pdf.setOnClickListener { callPdf() }
+//        button_pdf_upload.setOnClickListener { callUpload() }
     }
 
     private fun callPost() {

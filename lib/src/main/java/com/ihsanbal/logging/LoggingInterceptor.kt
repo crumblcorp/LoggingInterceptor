@@ -21,7 +21,7 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
             return chain.proceed(request)
         }
 
-        printlnRequestLog(request)
+        printlnRequestLog(request, withLineSize = builder.withLineSize)
 
         val startNs = System.nanoTime()
         val response: Response
@@ -33,42 +33,54 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         }
         val receivedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
 
-        printlnResponseLog(receivedMs, response, request)
+        printlnResponseLog(receivedMs = receivedMs, response = response, request = request, withLineSize = builder.withLineSize)
         return response
     }
 
-    private fun printlnResponseLog(receivedMs: Long, response: Response, request: Request) {
+    private fun printlnResponseLog(
+        receivedMs: Long,
+        response: Response,
+        request: Request,
+        withLineSize: Boolean
+    ) {
         Printer.printJsonResponse(
-                builder,
-                receivedMs,
-                response.isSuccessful,
-                response.code,
-                response.headers,
-                response,
-                request.url.encodedPathSegments,
-                response.message,
-                request.url.toString())
+            builder,
+            receivedMs,
+            response.isSuccessful,
+            response.code,
+            response.headers,
+            response,
+            request.url.encodedPathSegments,
+            response.message,
+            request.url.toString(),
+            withLineSize
+        )
     }
 
-    private fun printlnRequestLog(request: Request) {
+    private fun printlnRequestLog(request: Request, withLineSize: Boolean) {
         Printer.printJsonRequest(
-                builder,
-                request.body,
-                request.url.toUrl().toString(),
-                request.headers,
-                request.method)
+            builder,
+            request.body,
+            request.url.toUrl().toString(),
+            request.headers,
+            request.method,
+            withLineSize
+        )
     }
 
     private fun proceedResponse(chain: Interceptor.Chain, request: Request): Response {
         return if (builder.isMockEnabled && builder.listener != null) {
             TimeUnit.MILLISECONDS.sleep(builder.sleepMs)
             Response.Builder()
-                    .body(builder.listener!!.getJsonResponse(request)?.toResponseBody("application/json".toMediaTypeOrNull()))
-                    .request(chain.request())
-                    .protocol(Protocol.HTTP_2)
-                    .message("Mock data from LoggingInterceptor")
-                    .code(200)
-                    .build()
+                .body(
+                    builder.listener!!.getJsonResponse(request)
+                        ?.toResponseBody("application/json".toMediaTypeOrNull())
+                )
+                .request(chain.request())
+                .protocol(Protocol.HTTP_2)
+                .message("Mock data from LoggingInterceptor")
+                .code(200)
+                .build()
         } else chain.proceed(request)
     }
 
@@ -106,6 +118,8 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         var isMockEnabled = false
         var sleepMs: Long = 0
         var listener: BufferListener? = null
+        var withLineSize: Boolean = false
+            private set
 
         /**
          * @param level set log level
@@ -183,9 +197,11 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
          * @param isDebug set can sending log output
          * @return Builder
          */
-        @Deprecated(message = "Set level based on your requirement",
-                replaceWith = ReplaceWith(expression = "setLevel(Level.Basic)"),
-                level = DeprecationLevel.ERROR)
+        @Deprecated(
+            message = "Set level based on your requirement",
+            replaceWith = ReplaceWith(expression = "setLevel(Level.Basic)"),
+            level = DeprecationLevel.ERROR
+        )
         fun loggable(isDebug: Boolean): Builder {
             this.isDebugAble = isDebug
             return this
@@ -216,7 +232,10 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
          * @return Builder
          * @see Logger
          */
-        @Deprecated(message = "Create your own Logcat filter for best result", level = DeprecationLevel.ERROR)
+        @Deprecated(
+            message = "Create your own Logcat filter for best result",
+            level = DeprecationLevel.ERROR
+        )
         fun executor(executor: Executor?): Builder {
             TODO("Deprecated")
         }
@@ -234,6 +253,11 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
             return this
         }
 
+        fun withLineSize(withLineSize: Boolean): Builder {
+            this.withLineSize = withLineSize
+            return this
+        }
+
         /**
          * Call this if you want to have formatted pretty output in Android Studio logCat.
          * By default this 'hack' is not applied.
@@ -243,8 +267,10 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
          * @return Builder
          * @see Logger
          */
-        @Deprecated(message = "Android studio has resolved problem for latest versions",
-                level = DeprecationLevel.WARNING)
+        @Deprecated(
+            message = "Android studio has resolved problem for latest versions",
+            level = DeprecationLevel.WARNING
+        )
         fun enableAndroidStudioV3LogsHack(useHack: Boolean): Builder {
             isLogHackEnable = useHack
             return this

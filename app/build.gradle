@@ -1,25 +1,30 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 33
     //noinspection GradleDependency
+
+    namespace = "ihsanbal.com.logginginterceptor"
 
     defaultConfig {
         applicationId "ihsanbal.com.logginginterceptor"
-        minSdkVersion 21
-        targetSdkVersion 29
+        minSdkVersion 26
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         buildConfigField("boolean", "MOCK", "false")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+    kotlin {
+        jvmToolchain(17)
+//        compilerOptions {
+//            freeCompilerArgs.add("-Xcontext-sensitive-resolution")
+//            freeCompilerArgs.add("-Xindy-allow-annotated-lambdas=false")
+//            freeCompilerArgs.add("-Xlambdas=class")
+//        }
     }
 
     lintOptions {
@@ -37,6 +42,10 @@ android {
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+    }
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
     }
 }
 
