@@ -64,7 +64,6 @@ dependencies {
     implementation 'com.squareup.okio:okio:' + okioVersion
     kapt 'com.google.dagger:dagger-compiler:' + daggerVersion
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:' + leakCanaryVersion
-    releaseApi 'com.squareup.leakcanary:leakcanary-android-no-op:' + leakCanaryVersion
     compileOnly 'javax.annotation:jsr250-api:1.0'
     implementation(project(':lib')) {
         exclude group: 'org.json', module: 'json'
