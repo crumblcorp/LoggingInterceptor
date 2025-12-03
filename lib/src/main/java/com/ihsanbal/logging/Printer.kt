@@ -176,10 +176,15 @@ class Printer private constructor() {
                     val start = i * maxLogSize
                     var end = (i + 1) * maxLogSize
                     end = if (end > line.length) line.length else end
-                    if (logger == null) {
-                        I.log(type, tag, DEFAULT_LINE + line.substring(start, end), useLogHack)
-                    } else {
-                        logger.log(type, tag, line.substring(start, end))
+                    val logLine = line.substring(start, end)
+                    when {
+                        logLine.isEmpty() -> continue
+                        logger == null -> {
+                            I.log(type, tag, DEFAULT_LINE + logLine, useLogHack)
+                        }
+                        else -> {
+                            logger.log(type, tag, logLine)
+                        }
                     }
                 }
             }
