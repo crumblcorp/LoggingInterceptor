@@ -171,7 +171,8 @@ class Printer private constructor() {
             for (line in lines) {
                 val lineLength = line.length
                 val maxLogSize = if (withLineSize) 110 else lineLength
-                for (i in 0..if (maxLogSize == 0) 0 else lineLength / maxLogSize) {
+                if (maxLogSize == 0) continue
+                for (i in 0..lineLength / maxLogSize) {
                     val start = i * maxLogSize
                     var end = (i + 1) * maxLogSize
                     end = if (end > line.length) line.length else end

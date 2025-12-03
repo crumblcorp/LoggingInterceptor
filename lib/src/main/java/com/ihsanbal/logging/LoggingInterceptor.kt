@@ -118,7 +118,7 @@ class LoggingInterceptor private constructor(private val builder: Builder) : Int
         var isMockEnabled = false
         var sleepMs: Long = 0
         var listener: BufferListener? = null
-        var withLineSize: Boolean = false
+        var withLineSize: Boolean = true
             private set
 
         /**
